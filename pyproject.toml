@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "hc-graph-coloring"
+version = "0.1.0"
+description = ""
+authors = ["Matheus Boeira Dias <matheusboeira.aluno@unipampa.edu.br>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+networkx = "^3.4.2"
+matplotlib = "^3.9.2"
+simple-term-menu = "^1.6.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
