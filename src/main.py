@@ -6,7 +6,7 @@ from colored import Fore, Style
 
 seed = 42
 
-MAX_ITERATIONS = 2000
+MAX_ITERATIONS = 200
 
 def generate_edges(num_nodes, num_edges: int = 2):
     edges = []
@@ -211,8 +211,11 @@ class GraphColoringHillClimbing:
         plt.show()
 
     def conflict_over_time_graph(self, steepest_conflicts, first_choice_conflicts):
-        # result = "".join(map(str, conflicts_over_time1))
-        # print(result)
+
+        result2 = "".join(map(str, steepest_conflicts))
+        print(result2)
+        result = "".join(map(str, first_choice_conflicts))
+        print(result)
 
 
         # Plot the conflicts over iterations for both algorithms
