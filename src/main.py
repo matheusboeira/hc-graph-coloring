@@ -211,30 +211,15 @@ class GraphColoringHillClimbing:
         plt.show()
 
     def conflict_over_time_graph(self, steepest_conflicts, first_choice_conflicts):
-
-        result2 = "".join(map(str, steepest_conflicts))
-        print(result2)
-        result = "".join(map(str, first_choice_conflicts))
-        print(result)
-
-
-        # Plot the conflicts over iterations for both algorithms
         plt.figure(figsize=(10, 6))
-
-        # Plot the first algorithm
-        plt.plot(steepest_conflicts, label='Steepest Algorithm', color='blue', linestyle='-')
-
-        # Plot the second algorithm
+        plt.plot(steepest_conflicts, label='Steepest Algorithm', color='blue', linestyle=':')
         plt.plot(first_choice_conflicts, label='First Choice Algorithm', color='orange', linestyle='--')
-
-        # Add titles, labels, and legend
         plt.title('Comparison of Coloring Algorithms')
         plt.xlabel('Iterations')
         plt.ylabel('Number of Conflicts')
         plt.legend()
         plt.grid(True)
 
-        # Show the chart
         plt.show()
 
 # Exemplo de uso
