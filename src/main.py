@@ -86,7 +86,7 @@ class GraphColoringHillClimbing:
       print("Número de conflitos iniciais:", current_conflicts)
       
       if self.show_graph:
-        self.visualize_graph(current_coloring)
+        self.visualize_graph(current_coloring, is_initial=True)
       
       for _ in range(max_iterations):  
           conflicts_overtime.append(current_conflicts)
@@ -143,7 +143,7 @@ class GraphColoringHillClimbing:
       print("Número de conflitos iniciais:", current_conflicts)
 
       if self.show_graph:
-        self.visualize_graph(current_coloring)
+        self.visualize_graph(current_coloring, is_initial=True)
 
       for iteration in range(max_iterations):
           conflicts_overtime.append(current_conflicts)
@@ -197,7 +197,7 @@ class GraphColoringHillClimbing:
       print(f"Execution Time: {execution_time:.4f} seconds")
       return current_coloring, conflicts_overtime
 
-    def visualize_graph(self, coloring):
+    def visualize_graph(self, coloring, is_initial=False):
         """
         Visualiza o grafo com a coloração encontrada.
 
@@ -215,6 +215,11 @@ class GraphColoringHillClimbing:
             node_size=700
         )
         plt.title("Coloração de Grafos - Subida de Encosta")
+        if is_initial:
+            plt.xlabel("Grafo Inicial")
+        else:
+            plt.xlabel("Grafo Final (Pós algoritmo)")
+
         plt.show()
 
     def conflict_over_time_graph(self, steepest_conflicts, first_choice_conflicts):
