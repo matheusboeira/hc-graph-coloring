@@ -7,17 +7,17 @@ seed = 42
 
 def generate_edges(num_nodes, num_edges: int = 2, seed: int = None):
     edges = []
-    random.seed(seed)  # Garantir a reprodutibilidade caso uma semente seja passada
+    random.seed(seed)
 
     # Se o número de arestas for 1, faz uma conexão em "minhoca" (sequencial)
     if num_edges == 1:
         for i in range(num_nodes - 1):
-            edges.append((i, i + 1))  # Conecta cada nó ao próximo
+            edges.append((i, i + 1)) 
         return edges
 
     # Caso contrário, gera as arestas de forma aleatória
     for i in range(num_nodes):
-        _num_edges = random.randint(1, num_edges)  # Número aleatório de arestas para cada nó
+        _num_edges = random.randint(1, num_edges) 
 
         for _ in range(_num_edges):
             # Escolhe um nó aleatório para conectar (evita conectar o nó consigo mesmo)
@@ -329,10 +329,16 @@ def main():
         gc_hc.set_show_graph(show_graph)
 
     # Executa a coloração
-    solution = gc_hc.hill_climbing_greedy_coloring()
+    options = ["Greedy", "First Choice"]
+    terminal_menu = TerminalMenu(options)
+    menu_entry_index = terminal_menu.show()
+
+    if menu_entry_index == 0:
+        solution = gc_hc.hill_climbing_greedy_coloring()
+    elif menu_entry_index == 1:
+        solution = gc_hc.first_choice_hill_climbing_coloring()
 
     # Imprime resultados
-    # print("Coloração encontrada:", solution)
     print("Número de conflitos:", gc_hc.conflicts(solution))
 
     # Visualiza o grafo
