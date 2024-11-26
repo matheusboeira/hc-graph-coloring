@@ -227,6 +227,9 @@ class GraphColoringHillClimbing:
 def main():
     G = nx.Graph()
 
+    compare_versions = input(f"{Fore.BLUE}Deseja comparar as versões dos algoritmos? (S/N){Style.RESET}: ")
+    compare_versions = compare_versions.lower() == "s"
+
     options = [
       "Gerar 100 Vértices", 
       "Gerar 50 Vértices", 
@@ -257,24 +260,28 @@ def main():
     if show_graph:
         gc_hc.set_show_graph(show_graph)
 
-    # Executa a coloração
-    options = ["Steepest", "First Choice"]
-    terminal_menu = TerminalMenu(options)
-    print(f"{Fore.BLUE}Escolha a variação do algoritmo:{Style.RESET}", end="\n")
-    menu_entry_index = terminal_menu.show()
+    
+    if not compare_versions:
+        # Executa a coloração
+        options = ["Steepest", "First Choice"]
+        terminal_menu = TerminalMenu(options)
+        print(f"{Fore.BLUE}Escolha a variação do algoritmo:{Style.RESET}", end="\n")
+        menu_entry_index = terminal_menu.show()
 
-    if menu_entry_index == 0:
-        solution = gc_hc.hill_climbing_steepest_coloring()
-    elif menu_entry_index == 1:
-        solution = gc_hc.hill_climbing_first_choice_coloring()
+        if menu_entry_index == 0:
+            solution = gc_hc.hill_climbing_steepest_coloring()
+        elif menu_entry_index == 1:
+            solution = gc_hc.hill_climbing_first_choice_coloring()
 
-    # Imprime resultados
-    conflicts = gc_hc.conflicts(solution)
-    print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
+        # Imprime resultados
+        conflicts = gc_hc.conflicts(solution)
+        print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
 
-    # Visualiza o grafo
-    if show_graph:
-        gc_hc.visualize_graph(solution)
+        # Visualiza o grafo
+        if show_graph:
+            gc_hc.visualize_graph(solution)
+
+            
 
 # Executa o exemplo
 if __name__ == "__main__":
