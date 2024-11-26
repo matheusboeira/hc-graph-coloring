@@ -81,6 +81,7 @@ class GraphColoringHillClimbing:
       start_time = time.time()
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
+      conflicts_overtime = []
 
       print("Número de conflitos iniciais:", current_conflicts)
       
@@ -88,6 +89,8 @@ class GraphColoringHillClimbing:
         self.visualize_graph(current_coloring)
       
       for _ in range(max_iterations):  
+          conflicts_overtime.append(current_conflicts)
+
           if current_conflicts == 0 or _ == max_iterations - 1:
               print("Número de iterações: ", _ + 1)
 
@@ -128,13 +131,14 @@ class GraphColoringHillClimbing:
       end_time = time.time()
       execution_time = end_time - start_time
       print(f"Execution Time: {execution_time:.4f} seconds")
-      return current_coloring
+      return current_coloring, conflicts_overtime
     
 
     def hill_climbing_steepest_coloring(self, max_iterations=MAX_ITERATIONS):
       start_time = time.time()
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
+      conflicts_overtime = []
 
       print("Número de conflitos iniciais:", current_conflicts)
 
@@ -142,6 +146,8 @@ class GraphColoringHillClimbing:
         self.visualize_graph(current_coloring)
 
       for iteration in range(max_iterations):
+          conflicts_overtime.append(current_conflicts)
+
           if current_conflicts == 0:
               print(f"Solução encontrada em {iteration + 1} iterações.")
               return current_coloring
@@ -189,7 +195,7 @@ class GraphColoringHillClimbing:
       end_time = time.time()
       execution_time = end_time - start_time
       print(f"Execution Time: {execution_time:.4f} seconds")
-      return current_coloring
+      return current_coloring, conflicts_overtime
 
     def visualize_graph(self, coloring):
         """
@@ -211,9 +217,24 @@ class GraphColoringHillClimbing:
         plt.title("Coloração de Grafos - Subida de Encosta")
         plt.show()
 
+    def conflict_over_time_graph(self, steepest_conflicts, first_choice_conflicts):
+        plt.figure(figsize=(10, 6))
+        plt.plot(steepest_conflicts, label='Steepest Algorithm', color='blue', linestyle=':')
+        plt.plot(first_choice_conflicts, label='First Choice Algorithm', color='orange', linestyle='--')
+        plt.title('Comparison of Coloring Algorithms')
+        plt.xlabel('Iterations')
+        plt.ylabel('Number of Conflicts')
+        plt.legend()
+        plt.grid(True)
+
+        plt.show()
+
 # Exemplo de uso
 def main():
     G = nx.Graph()
+
+    compare_versions = input(f"{Fore.BLUE}Deseja comparar as versões dos algoritmos? (S/N){Style.RESET}: ")
+    compare_versions = compare_versions.lower() == "s"
 
     options = [
       "Gerar 100 Vértices", 
@@ -227,42 +248,56 @@ def main():
     nodes_map = { 0: 100, 1: 50, 2: 10 }
     option = nodes_map.get(menu_entry_index, None)
 
-    if option != None:
-        num_max_edges = int(input(f"{Fore.BLUE}Digite o número de arestas{Style.RESET}: "))
-        G.add_edges_from(generate_edges(option, num_max_edges))
-
     if option == None:
         _input = int(input(f"{Fore.BLUE}Número de vértices{Style.RESET}: "))
         num_max_edges = int(input(f"{Fore.BLUE}Digite o número de arestas{Style.RESET}: "))
-        G.add_edges_from(generate_edges(_input, num_max_edges)) 
+        G.add_edges_from(generate_edges(_input, num_max_edges))
+    else:
+        num_max_edges = int(input(f"{Fore.BLUE}Digite o número de arestas{Style.RESET}: "))
+        G.add_edges_from(generate_edges(option, num_max_edges))
         
     # Inicializa o algoritmo
     gc_hc = GraphColoringHillClimbing(G, max_colors=3)
 
-    show_graph = input(f"{Fore.BLUE}Deseja visualizar o grafo? (S/N){Style.RESET}: ")
-    show_graph = show_graph.lower() == "s"
+    if not compare_versions:
+        show_graph = input(f"{Fore.BLUE}Deseja visualizar o grafo? (S/N){Style.RESET}: ")
+        show_graph = show_graph.lower() == "s"
 
-    if show_graph:
-        gc_hc.set_show_graph(show_graph)
+        if show_graph:
+            gc_hc.set_show_graph(show_graph)
 
-    # Executa a coloração
-    options = ["Steepest", "First Choice"]
-    terminal_menu = TerminalMenu(options)
-    print(f"{Fore.BLUE}Escolha a variação do algoritmo:{Style.RESET}", end="\n")
-    menu_entry_index = terminal_menu.show()
+        # Executa a coloração
+        options = ["Steepest", "First Choice"]
+        terminal_menu = TerminalMenu(options)
+        print(f"{Fore.BLUE}Escolha a variação do algoritmo:{Style.RESET}", end="\n")
+        menu_entry_index = terminal_menu.show()
 
-    if menu_entry_index == 0:
-        solution = gc_hc.hill_climbing_steepest_coloring()
-    elif menu_entry_index == 1:
-        solution = gc_hc.hill_climbing_first_choice_coloring()
+        if menu_entry_index == 0:
+            solution, conflicts = gc_hc.hill_climbing_steepest_coloring()
+        elif menu_entry_index == 1:
+            solution, conflicts = gc_hc.hill_climbing_first_choice_coloring()
+
+        # Imprime resultados
+        conflicts = gc_hc.conflicts(solution)
+        print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
+
+        # Visualiza o resultado das comparações
+        gc_hc.visualize_graph(solution)
+        return
+
+    steepest_solution, steepest_conflicts_overtime = gc_hc.hill_climbing_steepest_coloring()
+    print(f"{Fore.BLUE}--- Mudando de algoritmo ---{Style.RESET}")
+    first_choice_solution, first_choice_conflicts_overtime = gc_hc.hill_climbing_first_choice_coloring()
+
+    gc_hc.conflict_over_time_graph(steepest_conflicts_overtime, first_choice_conflicts_overtime)
 
     # Imprime resultados
-    conflicts = gc_hc.conflicts(solution)
-    print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
+    steepest_conflicts = gc_hc.conflicts(steepest_solution)
+    print(f"{Fore.YELLOW}Número de conflitos passos largos{Style.RESET}:", steepest_conflicts)
+    first_choice_conflicts = gc_hc.conflicts(first_choice_solution)
+    print(f"{Fore.YELLOW}Número de conflitos primeira escolha{Style.RESET}:", first_choice_conflicts)
 
-    # Visualiza o grafo
-    if show_graph:
-        gc_hc.visualize_graph(solution)
+            
 
 # Executa o exemplo
 if __name__ == "__main__":
