@@ -10,6 +10,7 @@ python = "^3.10"
 networkx = "^3.4.2"
 matplotlib = "^3.9.2"
 simple-term-menu = "^1.6.4"
+colored = "^2.2.4"
 
 
 [build-system]

@@ -2,6 +2,7 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 from simple_term_menu import TerminalMenu
+from colored import Fore, Style
 
 seed = 42
 
@@ -90,6 +91,13 @@ class GraphColoringHillClimbing:
           if current_conflicts == 0:
               return current_coloring
           
+          if _ == max_iterations - 1:
+              print("---")
+              print("Algoritmo parou.")
+              print("Máximo de iterações atingido ou solução ótima não encontrada.")
+              print("---")
+              break
+          
           conflicted_nodes = [
               node for node in self.nodes 
               for neighbor in self.graph.neighbors(node) 
@@ -160,6 +168,7 @@ class GraphColoringHillClimbing:
 
           # Se nenhuma melhoria foi encontrada, estamos presos em um platô
           if best_coloring is None:
+              print("---")
               print("Nenhuma melhoria encontrada, algoritmo parou.")
               break
 
@@ -168,6 +177,7 @@ class GraphColoringHillClimbing:
           current_conflicts = best_conflicts
 
       print("Máximo de iterações atingido ou solução ótima não encontrada.")
+      print("---")
       return current_coloring
 
     def visualize_graph(self, coloring):
@@ -207,18 +217,18 @@ def main():
     option = nodes_map.get(menu_entry_index, None)
 
     if option != None:
-        num_max_edges = int(input("Digite o número de arestas: "))
+        num_max_edges = int(input(f"{Fore.BLUE}Digite o número de arestas{Style.RESET}: "))
         G.add_edges_from(generate_edges(option, num_max_edges))
 
     if option == None:
-        _input = int(input("Número de vértices: "))
-        num_max_edges = int(input("Digite o número de arestas: "))
+        _input = int(input(f"{Fore.BLUE}Número de vértices{Style.RESET}: "))
+        num_max_edges = int(input(f"{Fore.BLUE}Digite o número de arestas{Style.RESET}: "))
         G.add_edges_from(generate_edges(_input, num_max_edges)) 
         
     # Inicializa o algoritmo
     gc_hc = GraphColoringHillClimbing(G, max_colors=3)
 
-    show_graph = input("Deseja visualizar o grafo? (S/N): ")
+    show_graph = input(f"{Fore.BLUE}Deseja visualizar o grafo? (S/N){Style.RESET}: ")
     show_graph = show_graph.lower() == "s"
 
     if show_graph:
@@ -227,7 +237,7 @@ def main():
     # Executa a coloração
     options = ["Greedy", "First Choice"]
     terminal_menu = TerminalMenu(options)
-    print("Escolha a variação do algoritmo:", end="\n")
+    print(f"{Fore.BLUE}Escolha a variação do algoritmo:{Style.RESET}", end="\n")
     menu_entry_index = terminal_menu.show()
 
     if menu_entry_index == 0:
@@ -236,7 +246,8 @@ def main():
         solution = gc_hc.hill_climbing_first_choice_coloring()
 
     # Imprime resultados
-    print("Número de conflitos:", gc_hc.conflicts(solution))
+    conflicts = gc_hc.conflicts(solution)
+    print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
 
     # Visualiza o grafo
     if show_graph:
