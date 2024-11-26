@@ -1,3 +1,4 @@
+import time
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
@@ -6,6 +7,7 @@ from colored import Fore, Style
 
 seed = 42
 
+MAX_ITERATIONS = 1_000
 def generate_edges(num_nodes, num_edges: int = 2):
     edges = []
     random.seed(seed)
@@ -75,7 +77,8 @@ class GraphColoringHillClimbing:
         return conflicts
 
 
-    def hill_climbing_first_choice_coloring(self, max_iterations=500_000):
+    def hill_climbing_first_choice_coloring(self, max_iterations=MAX_ITERATIONS):
+      start_time = time.time()
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
@@ -120,11 +123,16 @@ class GraphColoringHillClimbing:
                       current_coloring = test_coloring
                       current_conflicts = test_conflicts
                       break
-      
+                  
+
+      end_time = time.time()
+      execution_time = end_time - start_time
+      print(f"Execution Time: {execution_time:.4f} seconds")
       return current_coloring
     
 
-    def hill_climbing_steepest_coloring(self, max_iterations=500_000):
+    def hill_climbing_steepest_coloring(self, max_iterations=MAX_ITERATIONS):
+      start_time = time.time()
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
@@ -178,6 +186,9 @@ class GraphColoringHillClimbing:
 
       print("Máximo de iterações atingido ou solução ótima não encontrada.")
       print("---")
+      end_time = time.time()
+      execution_time = end_time - start_time
+      print(f"Execution Time: {execution_time:.4f} seconds")
       return current_coloring
 
     def visualize_graph(self, coloring):
