@@ -124,7 +124,7 @@ class GraphColoringHillClimbing:
       return current_coloring
     
 
-    def hill_climbing_greedy_coloring(self, max_iterations=500_000):
+    def hill_climbing_steepest_coloring(self, max_iterations=500_000):
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
@@ -235,13 +235,13 @@ def main():
         gc_hc.set_show_graph(show_graph)
 
     # Executa a coloração
-    options = ["Greedy", "First Choice"]
+    options = ["Steepest", "First Choice"]
     terminal_menu = TerminalMenu(options)
     print(f"{Fore.BLUE}Escolha a variação do algoritmo:{Style.RESET}", end="\n")
     menu_entry_index = terminal_menu.show()
 
     if menu_entry_index == 0:
-        solution = gc_hc.hill_climbing_greedy_coloring()
+        solution = gc_hc.hill_climbing_steepest_coloring()
     elif menu_entry_index == 1:
         solution = gc_hc.hill_climbing_first_choice_coloring()
 
