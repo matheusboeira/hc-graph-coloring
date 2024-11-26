@@ -186,8 +186,8 @@ class GraphColoringHillClimbing:
 
         :param coloring: Dicionário de cores
         """
-        plt.figure(figsize=(15, 11))
-        pos = nx.spring_layout(self.graph)
+        plt.figure(figsize=(5, 5))
+        pos = nx.spring_layout(self.graph, seed=seed)
         colors = [coloring[node] for node in self.nodes]
         nx.draw(
             self.graph,
