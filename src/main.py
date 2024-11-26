@@ -81,6 +81,7 @@ class GraphColoringHillClimbing:
       start_time = time.time()
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
+      conflicts_overtime = []
 
       print("Número de conflitos iniciais:", current_conflicts)
       
@@ -88,6 +89,8 @@ class GraphColoringHillClimbing:
         self.visualize_graph(current_coloring)
       
       for _ in range(max_iterations):  
+          conflicts_overtime.append(current_conflicts)
+
           if current_conflicts == 0 or _ == max_iterations - 1:
               print("Número de iterações: ", _ + 1)
 
@@ -128,13 +131,14 @@ class GraphColoringHillClimbing:
       end_time = time.time()
       execution_time = end_time - start_time
       print(f"Execution Time: {execution_time:.4f} seconds")
-      return current_coloring
+      return current_coloring, conflicts_overtime
     
 
     def hill_climbing_steepest_coloring(self, max_iterations=MAX_ITERATIONS):
       start_time = time.time()
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
+      conflicts_overtime = []
 
       print("Número de conflitos iniciais:", current_conflicts)
 
@@ -142,6 +146,8 @@ class GraphColoringHillClimbing:
         self.visualize_graph(current_coloring)
 
       for iteration in range(max_iterations):
+          conflicts_overtime.append(current_conflicts)
+
           if current_conflicts == 0:
               print(f"Solução encontrada em {iteration + 1} iterações.")
               return current_coloring
@@ -189,7 +195,7 @@ class GraphColoringHillClimbing:
       end_time = time.time()
       execution_time = end_time - start_time
       print(f"Execution Time: {execution_time:.4f} seconds")
-      return current_coloring
+      return current_coloring, conflicts_overtime
 
     def visualize_graph(self, coloring):
         """
@@ -269,9 +275,9 @@ def main():
         menu_entry_index = terminal_menu.show()
 
         if menu_entry_index == 0:
-            solution = gc_hc.hill_climbing_steepest_coloring()
+            solution, conflicts = gc_hc.hill_climbing_steepest_coloring()
         elif menu_entry_index == 1:
-            solution = gc_hc.hill_climbing_first_choice_coloring()
+            solution, conflicts = gc_hc.hill_climbing_first_choice_coloring()
 
         # Imprime resultados
         conflicts = gc_hc.conflicts(solution)
@@ -280,6 +286,18 @@ def main():
         # Visualiza o grafo
         if show_graph:
             gc_hc.visualize_graph(solution)
+        return
+
+    steepest_solution, steepest_conflicts_overtime = gc_hc.hill_climbing_steepest_coloring()
+    first_choice_solution, first_choice_conflicts_overtime = gc_hc.hill_climbing_first_choice_coloring()
+
+    gc_hc.conflict_over_time_graph(steepest_conflicts_overtime, first_choice_conflicts_overtime)
+
+    # Imprime resultados
+    steepest_conflicts = gc_hc.conflicts(steepest_solution)
+    print(f"{Fore.YELLOW}Número de conflitos passos largos{Style.RESET}:", steepest_conflicts)
+    first_choice_conflicts = gc_hc.conflicts(first_choice_solution)
+    print(f"{Fore.YELLOW}Número de conflitos primeira escolha{Style.RESET}:", first_choice_conflicts)
 
             
 
