@@ -309,16 +309,19 @@ def main():
     ]
     terminal_menu = TerminalMenu(options)
     menu_entry_index = terminal_menu.show()
-    num_max_edges = int(input("Digite o número de arestas: "))
 
     nodes_map = { 0: 100, 1: 50, 2: 10}
     option = nodes_map.get(menu_entry_index, None)
-    G.add_edges_from(generate_edges(option, num_max_edges))
+
+    if option != None:
+        num_max_edges = int(input("Digite o número de arestas: "))
+        G.add_edges_from(generate_edges(option, num_max_edges))
 
     if option == None:
         _input = int(input("Número de vértices: "))
+        num_max_edges = int(input("Digite o número de arestas: "))
         G.add_edges_from(generate_edges(_input, num_max_edges)) 
-
+        
     # Inicializa o algoritmo
     gc_hc = GraphColoringHillClimbing(G, max_colors=4)
 
