@@ -5,7 +5,7 @@ from simple_term_menu import TerminalMenu
 
 seed = 42
 
-def generate_edges(num_nodes, num_edges: int = 2, seed: int = None):
+def generate_edges(num_nodes, num_edges: int = 2):
     edges = []
     random.seed(seed)
 
@@ -74,11 +74,11 @@ class GraphColoringHillClimbing:
         return conflicts
 
 
-    def hill_climbing_first_choice_coloring(self, max_iterations=500_000):
+    def hill_climbing_first_choice_coloring(self, max_iterations=100_000):
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
-      print("Número de conflitos iniciais:", self.conflicts(current_coloring))
+      print("Número de conflitos iniciais:", current_conflicts)
       
       if self.show_graph:
         self.visualize_graph(current_coloring)
@@ -116,7 +116,7 @@ class GraphColoringHillClimbing:
       return current_coloring
     
 
-    def hill_climbing_greedy_coloring(self, max_iterations=500_000):
+    def hill_climbing_greedy_coloring(self, max_iterations=100_000):
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
@@ -170,7 +170,7 @@ class GraphColoringHillClimbing:
       print("Máximo de iterações atingido ou solução ótima não encontrada.")
       return current_coloring
     
-    def hill_climbing_steepest_coloring(self, max_iterations=500_000):
+    def hill_climbing_steepest_coloring(self, max_iterations=100_000):
         current_coloring = self.initial_solution()
         current_conflicts = self.conflicts(current_coloring)
 
@@ -259,7 +259,7 @@ def main():
     terminal_menu = TerminalMenu(options)
     menu_entry_index = terminal_menu.show()
 
-    nodes_map = { 0: 100, 1: 50, 2: 10}
+    nodes_map = { 0: 100, 1: 50, 2: 10 }
     option = nodes_map.get(menu_entry_index, None)
 
     if option != None:
