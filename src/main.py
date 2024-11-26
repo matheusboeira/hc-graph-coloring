@@ -229,9 +229,24 @@ class GraphColoringHillClimbing:
 
         plt.show()
 
+    def conflict_over_time_graph(self, steepest_conflicts, first_choice_conflicts):
+        plt.figure(figsize=(10, 6))
+        plt.plot(steepest_conflicts, label='Steepest Algorithm', color='blue', linestyle=':')
+        plt.plot(first_choice_conflicts, label='First Choice Algorithm', color='orange', linestyle='--')
+        plt.title('Comparison of Coloring Algorithms')
+        plt.xlabel('Iterations')
+        plt.ylabel('Number of Conflicts')
+        plt.legend()
+        plt.grid(True)
+
+        plt.show()
+
 # Exemplo de uso
 def main():
     G = nx.Graph()
+
+    compare_versions = input(f"{Fore.BLUE}Deseja comparar as versões dos algoritmos? (S/N){Style.RESET}: ")
+    compare_versions = compare_versions.lower() == "s"
 
     compare_versions = input(f"{Fore.BLUE}Deseja comparar as versões dos algoritmos? (S/N){Style.RESET}: ")
     compare_versions = compare_versions.lower() == "s"
@@ -277,6 +292,9 @@ def main():
         elif menu_entry_index == 1:
             solution, conflicts = gc_hc.hill_climbing_first_choice_coloring()
 
+        # Imprime resultados
+        conflicts = gc_hc.conflicts(solution)
+        print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
         # Imprime resultados
         conflicts = gc_hc.conflicts(solution)
         print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
