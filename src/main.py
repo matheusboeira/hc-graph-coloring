@@ -131,7 +131,7 @@ class GraphColoringHillClimbing:
         return current_coloring
 
 
-    def steepest_hill_climbing_coloring(self, max_iterations=500_000):
+    def first_choice_hill_climbing_coloring(self, max_iterations=500_000):
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
