@@ -74,64 +74,7 @@ class GraphColoringHillClimbing:
         return conflicts
 
 
-    def hill_climbing_coloring(self, max_iterations=100_000):
-        """
-        Algoritmo de Subida de Encosta para coloração de grafos.
-
-        :param max_iterations: Número máximo de iterações
-        :return: Melhor solução de coloração encontrada
-        """
-        # Solução inicial
-        current_coloring = self.initial_solution()
-        current_conflicts = self.conflicts(current_coloring)
-
-        print("Número de conflitos iniciais:", self.conflicts(current_coloring))
-        # self.visualize_graph(current_coloring)
-
-        # Iterações de hill climbing
-        for _ in range(max_iterations):
-            # Se não há conflitos, solução encontrada
-            if current_conflicts == 0:
-                return current_coloring
-
-        conflicted_nodes = []
-
-        for node in self.nodes:
-          for neighbor in self.graph.neighbors(node):
-            if current_coloring[node] == current_coloring[neighbor]:
-              conflicted_nodes.append(node)
-              break
-
-            # Tenta recolorir nó com conflito
-            if conflicted_nodes:
-                node_to_recolor = random.choice(conflicted_nodes)
-
-                # Explora novas cores
-                best_coloring = current_coloring.copy()
-                best_conflicts = current_conflicts
-
-                for new_color in range(self.max_colors):
-                    if new_color == current_coloring[node_to_recolor]:
-                        continue
-
-                    # Testa nova coloração
-                    test_coloring = current_coloring.copy()
-                    test_coloring[node_to_recolor] = new_color
-                    test_conflicts = self.conflicts(test_coloring)
-
-                    # Atualiza se encontrar melhor solução
-                    if test_conflicts < best_conflicts:
-                        best_coloring = test_coloring
-                        best_conflicts = test_conflicts
-
-                # Atualiza coloração atual
-                current_coloring = best_coloring
-                current_conflicts = best_conflicts
-
-        return current_coloring
-
-
-    def first_choice_hill_climbing_coloring(self, max_iterations=500_000):
+    def hill_climbing_first_choice_coloring(self, max_iterations=500_000):
       current_coloring = self.initial_solution()
       current_conflicts = self.conflicts(current_coloring)
 
@@ -227,54 +170,60 @@ class GraphColoringHillClimbing:
       print("Máximo de iterações atingido ou solução ótima não encontrada.")
       return current_coloring
     
+    def hill_climbing_steepest_coloring(self, max_iterations=500_000):
+        current_coloring = self.initial_solution()
+        current_conflicts = self.conflicts(current_coloring)
 
-    def steepest_hill_climbing_coloring(self, max_iterations=100_000):
-      current_coloring = self.initial_solution()
-      current_conflicts = self.conflicts(current_coloring)
+        print("Número de conflitos iniciais:", current_conflicts)
 
-      print("Número de conflitos iniciais:", self.conflicts(current_coloring))
-      
-      if self.show_graph:
-        self.visualize_graph(current_coloring)
-      
-      for _ in range(max_iterations):
-          if current_conflicts == 0:
-              return current_coloring
-          
-          conflicted_nodes = [
-              node for node in self.nodes 
-              for neighbor in self.graph.neighbors(node) 
-              if current_coloring[node] == current_coloring[neighbor]
-          ]
-          
-          if conflicted_nodes:
-              node_to_recolor = random.choice(conflicted_nodes)
-              
-              # Encontra TODAS as possíveis melhorias
-              best_improvement = float('inf')
-              best_color = current_coloring[node_to_recolor]
-              
-              for new_color in range(self.max_colors):
-                  if new_color == current_coloring[node_to_recolor]:
-                      continue
-                  
-                  test_coloring = current_coloring.copy()
-                  test_coloring[node_to_recolor] = new_color
-                  test_conflicts = self.conflicts(test_coloring)
-                  
-                  # Calcula a melhoria
-                  improvement = current_conflicts - test_conflicts
-                  
-                  # Escolhe a MAIOR melhoria
-                  if improvement > best_improvement:
-                      best_improvement = improvement
-                      best_color = new_color
-              
-              # Aplica a MELHOR melhoria
-              current_coloring[node_to_recolor] = best_color
-              current_conflicts = self.conflicts(current_coloring)
-      
-      return current_coloring
+        if self.show_graph:
+            self.visualize_graph(current_coloring)
+
+        for iteration in range(max_iterations):
+            if current_conflicts == 0:
+                print("Solução encontrada em", iteration + 1, "iterações.")
+                return current_coloring
+
+            best_coloring = None
+            best_conflicts = current_conflicts
+
+            # Itera por todos os nós em conflito
+            conflicted_nodes = [
+                node for node in self.nodes
+                for neighbor in self.graph.neighbors(node)
+                if current_coloring[node] == current_coloring[neighbor]
+            ]
+
+            if not conflicted_nodes:
+                print("Nenhum nó em conflito encontrado, mas ainda há conflitos.")
+                break
+
+            # Avalia todas as possíveis recolorações para nós conflitantes
+            for node_to_recolor in conflicted_nodes:
+                for new_color in range(self.max_colors):
+                    if new_color == current_coloring[node_to_recolor]:
+                        continue
+
+                    test_coloring = current_coloring.copy()
+                    test_coloring[node_to_recolor] = new_color
+                    test_conflicts = self.conflicts(test_coloring)
+
+                    # Atualiza o melhor estado se uma melhoria for encontrada
+                    if test_conflicts < best_conflicts:
+                        best_coloring = test_coloring
+                        best_conflicts = test_conflicts
+
+            # Se nenhuma melhoria foi encontrada, estamos presos em um platô
+            if best_coloring is None or best_conflicts >= current_conflicts:
+                print("Nenhuma melhoria encontrada ou preso em um platô.")
+                break
+
+            # Aceita a melhor solução encontrada
+            current_coloring = best_coloring
+            current_conflicts = best_conflicts
+
+        print("Máximo de iterações atingido ou solução ótima não encontrada.")
+        return current_coloring
 
 
     def visualize_graph(self, coloring):
@@ -332,14 +281,17 @@ def main():
         gc_hc.set_show_graph(show_graph)
 
     # Executa a coloração
-    options = ["Greedy", "First Choice"]
+    options = ["Greedy", "First Choice", "Steepest"]
     terminal_menu = TerminalMenu(options)
+    print("Escolha a variação do algoritmo:", end="\n")
     menu_entry_index = terminal_menu.show()
 
     if menu_entry_index == 0:
         solution = gc_hc.hill_climbing_greedy_coloring()
     elif menu_entry_index == 1:
-        solution = gc_hc.first_choice_hill_climbing_coloring()
+        solution = gc_hc.hill_climbing_first_choice_coloring()
+    elif menu_entry_index == 2:
+        solution = gc_hc.hill_climbing_steepest_coloring()
 
     # Imprime resultados
     print("Número de conflitos:", gc_hc.conflicts(solution))
