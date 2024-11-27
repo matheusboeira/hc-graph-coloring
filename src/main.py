@@ -95,7 +95,7 @@ class GraphColoringHillClimbing:
               print("Número de iterações: ", _ + 1)
 
           if current_conflicts == 0:
-              return current_coloring
+              return current_coloring, conflicts_overtime
           
           if _ == max_iterations - 1:
               print("---")
@@ -258,7 +258,7 @@ def main():
         G.add_edges_from(generate_edges(_input, num_max_edges)) 
         
     # Inicializa o algoritmo
-    gc_hc = GraphColoringHillClimbing(G, max_colors=5)
+    gc_hc = GraphColoringHillClimbing(G, max_colors=3)
 
     show_graph = input(f"{Fore.BLUE}Deseja visualizar o grafo? (S/N){Style.RESET}: ")
     show_graph = show_graph.lower() == "s"
