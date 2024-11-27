@@ -150,7 +150,7 @@ class GraphColoringHillClimbing:
 
           if current_conflicts == 0:
               print(f"Solução encontrada em {iteration + 1} iterações.")
-              return current_coloring
+              return current_coloring, conflicts_overtime
 
           best_coloring = None
           best_conflicts = current_conflicts
@@ -258,7 +258,7 @@ def main():
         G.add_edges_from(generate_edges(_input, num_max_edges)) 
         
     # Inicializa o algoritmo
-    gc_hc = GraphColoringHillClimbing(G, max_colors=3)
+    gc_hc = GraphColoringHillClimbing(G, max_colors=5)
 
     show_graph = input(f"{Fore.BLUE}Deseja visualizar o grafo? (S/N){Style.RESET}: ")
     show_graph = show_graph.lower() == "s"
@@ -276,17 +276,26 @@ def main():
 
         if menu_entry_index == 0:
             solution, conflicts = gc_hc.hill_climbing_steepest_coloring()
+            # Imprime resultados
+            conflicts = gc_hc.conflicts(solution)
+            print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
+
+            # Visualiza o grafo
+            if show_graph:
+                gc_hc.visualize_graph(solution)
+            return
         elif menu_entry_index == 1:
             solution, conflicts = gc_hc.hill_climbing_first_choice_coloring()
+            # Imprime resultados
+            conflicts = gc_hc.conflicts(solution)
+            print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
 
-        # Imprime resultados
-        conflicts = gc_hc.conflicts(solution)
-        print(f"{Fore.YELLOW}Número de conflitos{Style.RESET}:", conflicts)
+            # Visualiza o grafo
+            if show_graph:
+                gc_hc.visualize_graph(solution)
+            return
 
-        # Visualiza o grafo
-        if show_graph:
-            gc_hc.visualize_graph(solution)
-        return
+
 
     steepest_solution, steepest_conflicts_overtime = gc_hc.hill_climbing_steepest_coloring()
     first_choice_solution, first_choice_conflicts_overtime = gc_hc.hill_climbing_first_choice_coloring()
